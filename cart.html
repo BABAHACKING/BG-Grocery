@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Freshcart Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .cart-page-container {
+            max-width: 1000px;
+            margin: 4rem auto;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .cart-items-list {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #eff2ef;
+        }
+
+        .cart-summary-card {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            height: fit-content;
+            border: 1px solid #e0e4e4;
+        }
+
+        .cart-item-row {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #eff2ef;
+            align-items: center;
+        }
+
+        .cart-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .qty-input {
+            width: 60px;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid #e0e4e4;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .cart-page-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sticky Header -->
+    <header id="main-header">
+        <a href="index.html" class="logo">Freshcart</a>
+
+        <div class="search-bar">
+            <input type="text" id="product-search" placeholder="Search for groceries...">
+            <button onclick="searchProducts()">Search</button>
+        </div>
+
+        <nav>
+            <ul>
+                <li><button class="nav-icon-btn" onclick="location.href='wishlist.html'"><img src="heart(1).svg"
+                            alt="Wishlist"></button></li>
+                <li><button class="nav-icon-btn" onclick="location.href='login.html'"><img src="person.svg"
+                            alt="Profile"></button></li>
+                <li>
+                    <button class="nav-icon-btn" id="cart-drawer-btn">
+                        <img src="cart3(1).svg" alt="Cart">
+                        <span class="cart-count">0</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="cart-page-container">
+        <div class="cart-items-list">
+            <h1 style="margin-bottom: 2rem; font-family: 'Outfit', sans-serif;">Shopping Cart</h1>
+            <div id="cart-page-items">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <div class="cart-summary-card">
+            <h2 style="margin-bottom: 1.5rem; font-family: 'Outfit', sans-serif;">Order Summary</h2>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span>Subtotal</span>
+                <span id="page-subtotal">₹0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span>Delivery</span>
+                <span style="color: var(--primary); font-weight: 600;">FREE</span>
+            </div>
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e0e4e4;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+                <strong style="font-size: 1.25rem;">Total</strong>
+                <strong style="font-size: 1.25rem;" id="page-total">₹0.00</strong>
+            </div>
+            <button class="buy-now" style="width: 100%; padding: 1rem; border-radius: var(--radius-sm);"
+                onclick="location.href='checkout.html'">Proceed to Checkout</button>
+            <a href="index.html"
+                style="display: block; text-align: center; margin-top: 1rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">Continue
+                Shopping</a>
+        </div>
+    </div>
+
+    <!-- Side Drawer Cart -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>Your Cart</h3>
+            <button class="nav-icon-btn" id="close-drawer">✕</button>
+        </div>
+        <div class="cart-drawer-content" id="cart-drawer-items"></div>
+        <div class="cart-drawer-footer">
+            <button class="buy-now" style="width: 100%; border-radius: var(--radius-sm);"
+                onclick="location.href='cart.html'">View Full Cart</button>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2025 Freshcart. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function renderCartPage() {
+            const container = document.getElementById('cart-page-items');
+            const subtotalEl = document.getElementById('page-subtotal');
+            const totalEl = document.getElementById('page-total');
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 4rem 2rem;">
+                    <img src="cart3(1).svg" style="width: 80px; opacity: 0.2; margin-bottom: 1.5rem;">
+                    <h3>Your cart is empty</h3>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem;">Looks like you haven't added anything yet.</p>
+                    <button class="buy-now" style="margin-top: 2rem; width: auto; padding: 0.75rem 2rem;" onclick="location.href='index2.html'">Start Shopping</button>
+                </div>`;
+                subtotalEl.textContent = "₹0.00";
+                totalEl.textContent = "₹0.00";
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = "";
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.innerHTML = `
+                    <img src="${item.image}" style="width: 100px; height: 100px; object-fit: contain; border-radius: var(--radius-sm); border: 1px solid #eff2ef;">
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary);">${item.name}</h4>
+                        <p style="color: var(--primary); font-weight: 700;">₹${item.price}</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="updatePageQty(${index}, this.value)">
+                        <button onclick="removePageItem(${index})" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: 600;">Remove</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            subtotalEl.textContent = `₹${total.toFixed(2)}`;
+            totalEl.textContent = `₹${total.toFixed(2)}`;
+        }
+
+        function updatePageQty(index, qty) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart[index].quantity = parseInt(qty);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCartPage();
+            updateCartCount();
+        }
+
+        function removePageItem(index) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCartPage();
+            updateCartCount();
+            showToast("Item removed from cart");
+        }
+
+        function handleCheckout() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            if (cart.length === 0) {
+                showToast("Your cart is empty!");
+                return;
+            }
+            showToast("Thank you! Your order has been placed.");
+            localStorage.removeItem("cart");
+            setTimeout(() => window.location.href = 'index.html', 1500);
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCartPage);
+    </script>
+</body>
+
+</html>

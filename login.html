@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Freshcart Premium</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      padding: 2rem;
+    }
+
+    .auth-card {
+      background: white;
+      padding: 3rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 450px;
+      border: 1px solid #eff2ef;
+    }
+
+    .form-container {
+      transition: var(--transition);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .auth-card h2 {
+      font-family: 'Outfit', sans-serif;
+      color: var(--primary);
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid #e0e4e4;
+      border-radius: var(--radius-sm);
+      background: #f8faf8;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 1rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .switch-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .switch-text a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sticky Header -->
+  <header id="main-header">
+    <a href="index.html" class="logo">Freshcart</a>
+
+    <div class="search-bar">
+      <input type="text" id="product-search" placeholder="Search for groceries...">
+      <button onclick="searchProducts()">Search</button>
+    </div>
+
+    <nav>
+      <ul>
+        <li><button class="nav-icon-btn" onclick="location.href='wishlist.html'"><img src="heart(1).svg"
+              alt="Wishlist"></button></li>
+        <li><button class="nav-icon-btn" onclick="location.href='login.html'"><img src="person.svg"
+              alt="Profile"></button></li>
+        <li>
+          <button class="nav-icon-btn" id="cart-drawer-btn">
+            <img src="cart3(1).svg" alt="Cart">
+            <span class="cart-count">0</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <!-- Login Form -->
+      <div id="loginForm" class="form-container">
+        <h2>Welcome Back</h2>
+        <form
+          onsubmit="event.preventDefault(); showToast('Login successful!'); setTimeout(() => window.location.href='index.html', 1000);">
+          <div class="input-group">
+            <label for="loginUsername">Username or Email</label>
+            <input type="text" id="loginUsername" placeholder="Enter your credentials" required>
+          </div>
+          <div class="input-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-primary">Login</button>
+        </form>
+        <p class="switch-text">
+          Don't have an account? <a href="#" onclick="showSignupForm()">Create one</a>
+        </p>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signupForm" class="form-container hidden">
+        <h2>Join Freshcart</h2>
+        <form onsubmit="event.preventDefault(); showToast('Account created!'); showLoginForm();">
+          <div class="input-group">
+            <label for="signupName">Full Name</label>
+            <input type="text" id="signupName" placeholder="John Doe" required>
+          </div>
+          <div class="input-group">
+            <label for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" placeholder="john@example.com" required>
+          </div>
+          <div class="input-group">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-primary">Sign Up</button>
+        </form>
+        <p class="switch-text">
+          Already have an account? <a href="#" onclick="showLoginForm()">Login</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Side Drawer Cart -->
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>Your Cart</h3>
+      <button class="nav-icon-btn" id="close-drawer">✕</button>
+    </div>
+    <div class="cart-drawer-content" id="cart-drawer-items">
+      <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Your cart is empty.</p>
+    </div>
+    <div class="cart-drawer-footer">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+        <strong>Subtotal</strong>
+        <strong id="drawer-total">₹0.00</strong>
+      </div>
+      <button class="buy-now" style="width: 100%; border-radius: var(--radius-sm);"
+        onclick="location.href='cart.html'">View Full Cart</button>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p>&copy; 2025 Freshcart. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    function showLoginForm() {
+      document.getElementById("loginForm").classList.remove("hidden");
+      document.getElementById("signupForm").classList.add("hidden");
+    }
+    function showSignupForm() {
+      document.getElementById("signupForm").classList.remove("hidden");
+      document.getElementById("loginForm").classList.add("hidden");
+    }
+  </script>
+</body>
+
+</html>

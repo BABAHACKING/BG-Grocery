@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Wishlist | Freshcart Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .wishlist-page-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 5%;
+        }
+
+        .wishlist-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            border: 1px solid #eff2ef;
+        }
+
+        .wishlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #eff2ef;
+        }
+
+        .wishlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .add-wishlist-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .add-wishlist-form input {
+            flex: 1;
+            padding: 0.85rem 1.25rem;
+            border: 1px solid #e0e4e4;
+            border-radius: var(--radius-sm);
+            background: #f8faf8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sticky Header -->
+    <header id="main-header">
+        <a href="index.html" class="logo">Freshcart</a>
+
+        <div class="search-bar">
+            <input type="text" id="product-search" placeholder="Search for groceries...">
+            <button onclick="searchProducts()">Search</button>
+        </div>
+
+        <nav>
+            <ul>
+                <li><button class="nav-icon-btn" onclick="location.href='wishlist.html'"><img src="heart(1).svg"
+                            alt="Wishlist"></button></li>
+                <li><button class="nav-icon-btn" onclick="location.href='login.html'"><img src="person.svg"
+                            alt="Profile"></button></li>
+                <li>
+                    <button class="nav-icon-btn" id="cart-drawer-btn">
+                        <img src="cart3(1).svg" alt="Cart">
+                        <span class="cart-count">0</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="wishlist-page-container">
+        <div class="wishlist-card">
+            <h1 style="margin-bottom: 2rem; font-family: 'Outfit', sans-serif; color: var(--primary);">My Wishlist</h1>
+
+            <div class="add-wishlist-form">
+                <input type="text" id="wishlist-input" placeholder="Add custom item (e.g. Fresh Milk)...">
+                <button class="buy-now" style="width: auto; padding: 0 2rem; border-radius: var(--radius-sm);"
+                    onclick="addWishlistItem()">Add</button>
+            </div>
+
+            <div id="wishlist-items-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Drawer Cart -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>Your Cart</h3>
+            <button class="nav-icon-btn" id="close-drawer">✕</button>
+        </div>
+        <div class="cart-drawer-content" id="cart-drawer-items"></div>
+        <div class="cart-drawer-footer">
+            <button class="buy-now" style="width: 100%; border-radius: var(--radius-sm);"
+                onclick="location.href='cart.html'">View Full Cart</button>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2025 Freshcart. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-items-container');
+            let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+            if (wishlist.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 3rem 0;">
+                    <p style="color: var(--text-muted);">Your wishlist is currently empty.</p>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            wishlist.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'wishlist-item';
+                el.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="font-weight: 600; color: var(--text-primary);">${item}</span>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button onclick="wishlistToCart('${item}')" style="background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600;">Add to Cart</button>
+                        <button onclick="removeWishlistItem(${index})" style="background: none; border: none; color: #e74c3c; cursor: pointer;">Remove</button>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function addWishlistItem() {
+            const input = document.getElementById('wishlist-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+            wishlist.push(val);
+            localStorage.setItem("wishlist", JSON.stringify(wishlist));
+            input.value = "";
+            renderWishlist();
+            showToast(`"${val}" added to wishlist`);
+        }
+
+        function removeWishlistItem(index) {
+            let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+            const item = wishlist[index];
+            wishlist.splice(index, 1);
+            localStorage.setItem("wishlist", JSON.stringify(wishlist));
+            renderWishlist();
+            showToast(`"${item}" removed`);
+        }
+
+        function wishlistToCart(item) {
+            // Simplified add to cart for custom wishlist items
+            addToCart(item, 0, 'cart3(1).svg');
+            showToast(`Trying to find and add "${item}"...`);
+        }
+
+        document.addEventListener('DOMContentLoaded', renderWishlist);
+        document.getElementById('wishlist-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addWishlistItem();
+        });
+    </script>
+</body>
+
+</html>

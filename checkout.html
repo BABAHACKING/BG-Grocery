@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Freshcart Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .checkout-grid {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        .checkout-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid #eff2ef;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border: 1px solid #e0e4e0;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(27, 94, 32, 0.05);
+        }
+
+        .location-btn {
+            background: #e8f5e9;
+            color: var(--primary);
+            border: 1px dashed var(--primary);
+            padding: 0.75rem;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .total-row {
+            border-top: 2px solid #eff2ef;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        @media (max-width: 968px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="main-header">
+        <a href="index.html" class="logo">Freshcart</a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index2.html">Shop</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="checkout-grid">
+        <div class="checkout-card">
+            <h2 style="font-family: 'Outfit'; margin-bottom: 2rem;">Delivery Details</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="cust-name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="cust-phone" placeholder="98765 43210" required>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea id="cust-address" rows="3" placeholder="Flat No, Street, Landmark" required></textarea>
+                    <button type="button" class="location-btn" onclick="getLocation()">
+                        📍 Use My Current Location
+                    </button>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; font-family: 'Outfit';">Payment Method</h3>
+                <div style="display: grid; gap: 1rem; grid-template-columns: 1fr 1fr;">
+                    <label
+                        style="border: 1px solid #eff2ef; padding: 1rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="payment" value="cod" checked> Cash on Delivery
+                    </label>
+                    <label
+                        style="border: 1px solid #eff2ef; padding: 1rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="payment" value="online"> Online Payment
+                    </label>
+                </div>
+
+                <button type="submit" class="buy-now" style="width: 100%; margin-top: 2rem; padding: 1.25rem;">
+                    Place Order Now
+                </button>
+            </form>
+        </div>
+
+        <div class="checkout-card" style="height: fit-content;">
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1.5rem;">Order Summary</h3>
+            <div id="checkout-items">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="order-summary-item" style="margin-top: 2rem;">
+                <span>Subtotal</span>
+                <span id="subtotal">₹0.00</span>
+            </div>
+            <div class="order-summary-item">
+                <span>Delivery Fee</span>
+                <span>₹40.00</span>
+            </div>
+            <div class="total-row">
+                <span>Grand Total</span>
+                <span id="grand-total">₹40.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCheckoutSummary();
+        });
+
+        function renderCheckoutSummary() {
+            const container = document.getElementById('checkout-items');
+            const subtotalEl = document.getElementById('subtotal');
+            const totalEl = document.getElementById('grand-total');
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            if (cart.length === 0) {
+                location.href = 'index.html';
+                return;
+            }
+
+            container.innerHTML = "";
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                subtotal += item.price * item.quantity;
+                const itemEl = document.createElement('div');
+                itemEl.className = 'order-summary-item';
+                itemEl.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <span>₹${item.price * item.quantity}</span>
+                `;
+                container.appendChild(itemEl);
+            });
+
+            subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+            totalEl.textContent = `₹${(subtotal + 40).toFixed(2)}`;
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                showToast("Fetching location...");
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    // In a real app, we'd use Reverse Geocoding API (e.g. Google Maps)
+                    // For now, we'll simulate the text address
+                    document.getElementById('cust-address').value = `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)} (Location Detected)`;
+                    showToast("Location updated!");
+                }, () => {
+                    showToast("Unable to retrieve location.");
+                });
+            }
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const orderData = {
+                customer_name: document.getElementById('cust-name').value,
+                customer_phone: document.getElementById('cust-phone').value,
+                delivery_address: document.getElementById('cust-address').value,
+                items: JSON.parse(localStorage.getItem("cart")),
+                total_amount: parseFloat(document.getElementById('grand-total').textContent.replace('₹', '')),
+                status: 'Ordered',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (typeof db !== 'undefined') {
+                    const docRef = await db.collection('orders').add(orderData);
+                    localStorage.removeItem('cart');
+                    location.href = `order-tracking.html?id=${docRef.id}`;
+                } else {
+                    showToast("Firebase not configured. Please add your credentials.");
+                }
+            } catch (error) {
+                console.error("Error placing order: ", error);
+                showToast("Failed to place order.");
+            }
+        });
+    </script>
+</body>
+
+</html>

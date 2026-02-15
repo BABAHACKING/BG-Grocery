@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freshcart | Premium Online Grocery Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Sticky Header -->
+  <header id="main-header">
+    <a href="index.html" class="logo">Freshcart</a>
+
+    <div class="search-bar">
+      <input type="text" id="product-search" placeholder="Search for fresh groceries...">
+      <button onclick="searchProducts()">Search</button>
+    </div>
+
+    <nav>
+      <ul>
+        <li><button class="nav-icon-btn" onclick="location.href='wishlist.html'"><img src="heart(1).svg"
+              alt="Wishlist"></button></li>
+        <li><button class="nav-icon-btn" onclick="location.href='login.html'"><img src="person.svg"
+              alt="Profile"></button></li>
+        <li>
+          <button class="nav-icon-btn" id="cart-drawer-btn">
+            <img src="cart3(1).svg" alt="Cart">
+            <span class="cart-count">0</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Secondary Navbar -->
+  <div class="navbar">
+    <a href="index.html" class="active">Home</a>
+    <a href="index2.html">Shop</a>
+    <a href="about.html">About Us</a>
+    <a href="services.html">Our Services</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="product-tag">Free Delivery on first order</span>
+      <h1>Freshness<br>Delivered Daily</h1>
+      <p>Experience the finest selection of organic fruits and vegetables, sourced directly from local farms to your
+        kitchen.</p>
+      <button class="buy-now" style="width: auto; padding: 1rem 2rem; border-radius: 40px;"
+        onclick="location.href='index2.html'">Shop Now</button>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider">
+        <div class="slides">
+          <div class="slide"><img src="Screenshot 2025-01-20 201748.png" alt="Fresh Fruits"></div>
+          <div class="slide"><img src="Screenshot 2025-01-20 202026.png" alt="Organic Vegetables"></div>
+          <div class="slide"><img src="989.png" alt="Grocery Deals"></div>
+        </div>
+        <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+        <button class="next" onclick="moveSlide(1)">&#10095;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="products">
+    <div class="product">
+      <span class="product-tag">Fresh</span>
+      <a href="product-details.html?id=kiwi"><img src="all fruits image/1.png" alt="Kiwi"></a>
+      <a href="product-details.html?id=kiwi" style="text-decoration: none; color: inherit;">
+        <h3>Fresh Kiwi</h3>
+      </a>
+      <p class="price">₹300 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Kiwi', 300, 'all fruits image/1.png')">Add to Cart</button>
+        <button class="buy-now" onclick="buyNow('Kiwi', 300, 'all fruits image/1.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <span class="product-tag">Seasonal</span>
+      <a href="product-details.html?id=carambola"><img src="all fruits image/amrak.png" alt="Carambola"></a>
+      <a href="product-details.html?id=carambola" style="text-decoration: none; color: inherit;">
+        <h3>Carambola</h3>
+      </a>
+      <p class="price">₹90 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Carambola', 90, 'all fruits image/amrak.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Carambola', 90, 'all fruits image/amrak.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <span class="product-tag">Best Seller</span>
+      <a href="product-details.html?id=apple"><img src="all fruits image/apple.png" alt="Apple"></a>
+      <a href="product-details.html?id=apple" style="text-decoration: none; color: inherit;">
+        <h3>Fresh Apple</h3>
+      </a>
+      <p class="price">₹120 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Fresh Apple', 120, 'all fruits image/apple.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Fresh Apple', 120, 'all fruits image/apple.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=watermelon"><img src="all fruits image/hirmana.png" alt="Watermelon"></a>
+      <a href="product-details.html?id=watermelon" style="text-decoration: none; color: inherit;">
+        <h3>Watermelon</h3>
+      </a>
+      <p class="price">₹30 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Watermelon', 30, 'all fruits image/hirmana.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Watermelon', 30, 'all fruits image/hirmana.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=banana"><img src="all fruits image/Banan.png" alt="Banana"></a>
+      <a href="product-details.html?id=banana" style="text-decoration: none; color: inherit;">
+        <h3>Golden Banana</h3>
+      </a>
+      <p class="price">₹60 / Dozen</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Banana', 60, 'all fruits image/Banan.png')">Add to Cart</button>
+        <button class="buy-now" onclick="buyNow('Banana', 60, 'all fruits image/Banan.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=lychee"><img src="all fruits image/Lichi.png" alt="Lychee"></a>
+      <a href="product-details.html?id=lychee" style="text-decoration: none; color: inherit;">
+        <h3>Sweet Lychee</h3>
+      </a>
+      <p class="price">₹120 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Lychee', 120, 'all fruits image/Lichi.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Lychee', 120, 'all fruits image/Lichi.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=grapes"><img src="all fruits image/graps.png" alt="Grapes"></a>
+      <a href="product-details.html?id=grapes" style="text-decoration: none; color: inherit;">
+        <h3>Fresh Grapes</h3>
+      </a>
+      <p class="price">₹80 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Grapes', 80, 'all fruits image/graps.png')">Add to Cart</button>
+        <button class="buy-now" onclick="buyNow('Grapes', 80, 'all fruits image/graps.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=orange"><img src="all fruits image/orange.png" alt="Orange"></a>
+      <a href="product-details.html?id=orange" style="text-decoration: none; color: inherit;">
+        <h3>Juicy Orange</h3>
+      </a>
+      <p class="price">₹60 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Orange', 60, 'all fruits image/orange.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Orange', 60, 'all fruits image/orange.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=mango"><img src="all fruits image/mango.png" alt="Mango"></a>
+      <a href="product-details.html?id=mango" style="text-decoration: none; color: inherit;">
+        <h3>Alphonso Mango</h3>
+      </a>
+      <p class="price">₹150 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Mango', 150, 'all fruits image/mango.png')">Add to Cart</button>
+        <button class="buy-now" onclick="buyNow('Mango', 150, 'all fruits image/mango.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=pineapple"><img src="all fruits image/ananas.png" alt="Pineapple"></a>
+      <a href="product-details.html?id=pineapple" style="text-decoration: none; color: inherit;">
+        <h3>Tropical Pineapple</h3>
+      </a>
+      <p class="price">₹70 / Piece</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Pineapple', 70, 'all fruits image/ananas.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Pineapple', 70, 'all fruits image/ananas.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=pomegranate"><img src="all fruits image/anar.png" alt="Pomegranate"></a>
+      <a href="product-details.html?id=pomegranate" style="text-decoration: none; color: inherit;">
+        <h3>Pomegranate</h3>
+      </a>
+      <p class="price">₹180 / Kg</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Pomegranate', 180, 'all fruits image/anar.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Pomegranate', 180, 'all fruits image/anar.png')">Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <a href="product-details.html?id=dragon"><img src="all fruits image/dragon.png" alt="Dragon Fruit"></a>
+      <a href="product-details.html?id=dragon" style="text-decoration: none; color: inherit;">
+        <h3>Dragon Fruit</h3>
+      </a>
+      <p class="price">₹100 / Piece</p>
+      <div class="product-actions">
+        <button class="add-to-cart" onclick="addToCart('Dragon Fruit', 100, 'all fruits image/dragon.png')">Add to
+          Cart</button>
+        <button class="buy-now" onclick="buyNow('Dragon Fruit', 100, 'all fruits image/dragon.png')">Buy Now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Side Drawer Cart -->
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>Your Cart</h3>
+      <button class="nav-icon-btn" id="close-drawer">✕</button>
+    </div>
+    <div class="cart-drawer-content" id="cart-drawer-items">
+      <!-- Items populated by JS -->
+      <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Your cart is empty.</p>
+    </div>
+    <div class="cart-drawer-footer">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+        <strong>Subtotal</strong>
+        <strong id="drawer-total">₹0.00</strong>
+      </div>
+      <button class="buy-now" style="width: 100%; border-radius: var(--radius-sm);"
+        onclick="location.href='cart.html'">View Full Cart</button>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-column">
+        <a href="index.html" class="logo" style="color: white; margin-bottom: 1.5rem; display: block;">Freshcart</a>
+        <p>Delivering fresh happiness since 2025. We source the best for you.</p>
+      </div>
+      <div class="footer-column">
+        <h3>Categories</h3>
+        <ul>
+          <li>Vegetables & Fruits</li>
+          <li>Breakfast & Instant Food</li>
+          <li>Bakery & Biscuits</li>
+          <li>Organic & Gourmet</li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Support</h3>
+        <ul>
+          <li>Help Center</li>
+          <li>FAQ</li>
+          <li>Payments</li>
+          <li>Shipping</li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Contact</h3>
+        <ul>
+          <li>+1 234 567 890</li>
+          <li>support@freshcart.com</li>
+          <li>123 Grocery Lane, Fresh City</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Freshcart. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

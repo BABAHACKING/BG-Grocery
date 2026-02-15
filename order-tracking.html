@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order | Freshcart Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tracking-container {
+            max-width: 800px;
+            margin: 5rem auto;
+            padding: 0 5%;
+            text-align: center;
+        }
+
+        .order-id-badge {
+            display: inline-block;
+            background: #f0f4f0;
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            border: 1px solid #eff2ef;
+        }
+
+        /* Progress Timeline */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 4rem 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #eff2ef;
+            z-index: 1;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: var(--primary);
+            z-index: 2;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .step {
+            position: relative;
+            z-index: 3;
+            width: 50px;
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 4px solid #eff2ef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            font-weight: 700;
+        }
+
+        .step.active .step-icon {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .step.active .step-label {
+            color: var(--text-primary);
+        }
+
+        .tracking-details {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            text-align: left;
+            margin-top: 3rem;
+            border: 1px solid #eff2ef;
+        }
+
+        @media (max-width: 600px) {
+            .step-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="main-header">
+        <a href="index.html" class="logo">Freshcart</a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index2.html">Shop</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="tracking-container">
+        <h1 style="font-family: 'Outfit'; margin-bottom: 1rem;">Live Order Tracking</h1>
+        <div class="order-id-badge">Order ID: <span id="display-order-id">Loading...</span></div>
+
+        <div class="timeline">
+            <div class="timeline-progress" id="progress-bar"></div>
+            <div class="step" id="step-ordered">
+                <div class="step-icon">1</div>
+                <div class="step-label">Ordered</div>
+            </div>
+            <div class="step" id="step-packed">
+                <div class="step-icon">2</div>
+                <div class="step-label">Packed</div>
+            </div>
+            <div class="step" id="step-shipped">
+                <div class="step-icon">3</div>
+                <div class="step-label">Shipped</div>
+            </div>
+            <div class="step" id="step-delivery">
+                <div class="step-icon">4</div>
+                <div class="step-label">Delivering</div>
+            </div>
+            <div class="step" id="step-delivered">
+                <div class="step-icon">5</div>
+                <div class="step-label">Delivered</div>
+            </div>
+        </div>
+
+        <div class="tracking-details" id="tracking-info">
+            <h2 style="font-family: 'Outfit'; margin-bottom: 1.5rem;">Order Details</h2>
+            <div id="order-content">
+                <p>Connecting to backend...</p>
+            </div>
+        </div>
+
+        <button class="add-to-cart" onclick="location.href='index.html'"
+            style="margin-top: 3rem; width: auto; padding: 1rem 2rem;">
+            Back to Home
+        </button>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+
+            if (!orderId) {
+                location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('display-order-id').textContent = orderId;
+            initTracking(orderId);
+        });
+
+        function initTracking(id) {
+            if (typeof db === 'undefined') {
+                showToast("Firebase not initialized. Check your credentials.");
+                return;
+            }
+
+            // Real-time listener for order status
+            db.collection('orders').doc(id).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    updateStatusUI(data.status);
+                    renderOrderInfo(data);
+                } else {
+                    document.getElementById('order-content').innerHTML = `<p>Order not found.</p>`;
+                }
+            });
+        }
+
+        const statusMap = {
+            'Ordered': 0,
+            'Packed': 1,
+            'Shipped': 2,
+            'Out for Delivery': 3,
+            'Delivered': 4
+        };
+
+        const steps = ['step-ordered', 'step-packed', 'step-shipped', 'step-delivery', 'step-delivered'];
+
+        function updateStatusUI(status) {
+            const index = statusMap[status] || 0;
+            const progress = (index / (steps.length - 1)) * 100;
+
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            steps.forEach((stepId, i) => {
+                const el = document.getElementById(stepId);
+                el.classList.remove('active', 'completed');
+                if (i < index) el.classList.add('completed');
+                if (i === index) el.classList.add('active');
+            });
+        }
+
+        function renderOrderInfo(data) {
+            const itemsHtml = data.items.map(item => `<li>${item.name} (x${item.quantity})</li>`).join('');
+            document.getElementById('order-content').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-muted);">Delivery to:</h4>
+                        <p><strong>${data.customer_name}</strong></p>
+                        <p>${data.delivery_address}</p>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-muted);">Total Paid:</h4>
+                        <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">₹${data.total_amount}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eff2ef;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-muted);">Items:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${itemsHtml}
+                    </ul>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>
